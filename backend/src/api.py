@@ -5,12 +5,10 @@ from fastapi.responses import ORJSONResponse
 from core.config import CONFIG
 
 from fashion.clothes import router as clothes_router
-from fashion.user import router as user_router
 
 app = FastAPI(
     title="NextIn API", version="1.0.0", default_response_class=ORJSONResponse
 )
-app.include_router(user_router)
 app.include_router(clothes_router)
 
 

@@ -5,6 +5,7 @@ from openai import OpenAI
 
 from core.config import CONFIG
 
+
 class LLMOpenAI:
     def __init__(self):
         self.key = CONFIG.OPENAI.API_KEY

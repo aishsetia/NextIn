@@ -20,7 +20,9 @@ You are an expert in clothing and fashion. Your task is to analyse the given ima
 The image of the clothing item is attached. The attributes should be in the following format:
 {output_format}
 DO NOT MISS ANY INFORMATION OR ADD ANY EXTRA INFORMATION THAT IS NOT IN THE IMAGE.
-""".format(output_format=output_format)
+""".format(
+    output_format=output_format
+)
 
 
 def extract_attributes(image_fp: str) -> dict:
@@ -30,7 +32,9 @@ def extract_attributes(image_fp: str) -> dict:
     message_with_image["content"].append(
         {
             "type": "image_url",
-            "image_url": {"url": f"data:image/jpeg;base64,{b64encode(image_fp).decode('utf-8')}"},
+            "image_url": {
+                "url": f"data:image/jpeg;base64,{b64encode(image_fp).decode('utf-8')}"
+            },
         }
     )
     messages = [
@@ -43,18 +47,24 @@ def extract_attributes(image_fp: str) -> dict:
 
     return validate_and_parse_output(output)
 
+
 def validate_and_parse_output(output: str) -> dict:
     try:
         output = json.loads(output)
     except json.JSONDecodeError:
         raise ValueError("Invalid JSON output")
-    
+
     # check if all required fields are present
-    if "color" not in output or "garment_type" not in output or "patterns" not in output or "look_type" not in output:
+    if (
+        "color" not in output
+        or "garment_type" not in output
+        or "patterns" not in output
+        or "look_type" not in output
+    ):
         raise ValueError("Missing required fields")
-    
+
     # check if look_type is one of the allowed values
     if output["look_type"] not in [look_type.value for look_type in LookType]:
         raise ValueError("Invalid look_type")
-    
+
     return output

@@ -27,6 +27,7 @@ output_attributes_description = """
 5. **Completion:** Find the best combination of clothing items that are relevant to the prompt, that would yield a complete outfit. This should include all items one would need to wear from top to bottom.
 """
 
+
 def process_request_for_proposals(request_for_proposals: str) -> list[str]:
     model = LLMOpenAIModels.GPT_4O_MINI.value
     messages = [
