@@ -6,7 +6,6 @@ from uuid import uuid4
 
 
 class ClothingItemStatus(str, Enum):
-    WAITING_FOR_FILE = "WAITING_FOR_FILE"
     PROCESSING = "PROCESSING"
     FINISHED = "FINISHED"
     FAILED = "FAILED"
@@ -27,5 +26,5 @@ class ClothingItem(SQLModel, table=True):
     garment_type: Optional[str] = Field(default=None)
     patterns: Optional[str] = Field(default=None)
     look_type: Optional[LookType] = Field(default=None)
-    created_at: datetime = Field(default_factory=lambda: datetime.now(datetime.UTC))
+    created_at: datetime = Field(default_factory=lambda: datetime.now())
     status: ClothingItemStatus = Field()

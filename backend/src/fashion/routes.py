@@ -15,9 +15,10 @@ router = APIRouter(
 
 @router.get("/")
 async def get_clothes(db_session: DBSession) -> Clothes:
-    clothes = await db_session.exec(
+    clothes_query = await db_session.exec(
         select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.FINISHED)
-    ).all()
+    )
+    clothes = clothes_query.all()
     return Clothes(
         clothes=[
             ClothingInfo(
@@ -35,9 +36,10 @@ async def get_clothes(db_session: DBSession) -> Clothes:
 
 @router.get("/in-progress")
 async def get_in_progress_clothes(db_session: DBSession) -> ClothesInProgress:
-    clothes = await db_session.exec(
+    clothes_query = await db_session.exec(
         select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.PROCESSING)
-    ).all()
+    )
+    clothes = clothes_query.all()
     return ClothesInProgress(
         clothes=[
             ClothingInfoMinimal(
@@ -57,7 +59,8 @@ async def upload_clothes(db_session: DBSession, image: UploadFile = File(...)) -
     image_path = f"uploads/{image.filename}"
     with open(image_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
-    cloth = ClothingItem(image_path=image_path)
+    cloth = ClothingItem(image_path=image_path, status=ClothingItemStatus.PROCESSING)
     db_session.add(cloth)
     await db_session.commit()
+    await db_session.refresh(cloth)
     return UploadClothResponse(id=cloth.id)
