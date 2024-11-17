@@ -6,7 +6,7 @@ from sqlmodel import SQLModel
 
 from alembic import context
 from core.db import url_primary_sync
-from fashion.clothes import ClothingItem
+from fashion import ClothingItem
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

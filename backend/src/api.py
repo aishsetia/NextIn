@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
 from core.config import CONFIG
 
-from fashion.clothes import router as clothes_router
+from fashion import router as clothes_router
 
 app = FastAPI(
     title="NextIn API", version="1.0.0", default_response_class=ORJSONResponse

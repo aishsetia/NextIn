@@ -1,0 +1,63 @@
+from fastapi import APIRouter
+from sqlmodel import select
+
+from core.db import DBSession
+from .models import ClothingItem, ClothingItemStatus
+from .schemas import Clothes, ClothesInProgress, ClothingInfo, ClothingInfoMinimal, UploadClothResponse
+from fastapi import UploadFile, File, HTTPException
+import shutil
+import os
+router = APIRouter(
+    prefix="/clothes",
+    tags=["clothes"],
+)
+
+
+@router.get("/")
+async def get_clothes(db_session: DBSession) -> Clothes:
+    clothes = await db_session.exec(
+        select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.FINISHED)
+    ).all()
+    return Clothes(
+        clothes=[
+            ClothingInfo(
+                id=c.id,
+                image_path=c.image_path,
+                status=c.status,
+                color=c.color,
+                garment_type=c.garment_type,
+                patterns=c.patterns,
+                look_type=c.look_type,
+            )
+            for c in clothes
+        ]
+    )
+
+@router.get("/in-progress")
+async def get_in_progress_clothes(db_session: DBSession) -> ClothesInProgress:
+    clothes = await db_session.exec(
+        select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.PROCESSING)
+    ).all()
+    return ClothesInProgress(
+        clothes=[
+            ClothingInfoMinimal(
+                id=c.id,
+                image_path=c.image_path,
+                status=c.status,
+            )
+            for c in clothes
+        ]
+    )
+
+@router.post("/")
+async def upload_clothes(db_session: DBSession, image: UploadFile = File(...)) -> UploadClothResponse:
+    if not image.filename:
+        raise HTTPException(status_code=400, detail="No file uploaded")
+    os.makedirs("uploads", exist_ok=True)
+    image_path = f"uploads/{image.filename}"
+    with open(image_path, "wb") as buffer:
+        shutil.copyfileobj(image.file, buffer)
+    cloth = ClothingItem(image_path=image_path)
+    db_session.add(cloth)
+    await db_session.commit()
+    return UploadClothResponse(id=cloth.id)
