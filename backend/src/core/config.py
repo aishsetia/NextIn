@@ -16,8 +16,6 @@ class UvicornConfig(BaseSettings):
     WORKERS: int = 4
     RELOAD_ON_CHANGE: bool = False
 
-    IS_CLOUD: bool = True
-
     class Config:
         env_prefix = "UVICORN_"
 
@@ -36,14 +34,6 @@ class DatabaseConfig(BaseSettings):
         env_prefix = "DB_"
 
 
-class FirebaseConfig(BaseSettings):
-    JWT_KEY: str
-    API_KEY: str
-
-    class Config:
-        env_prefix = "FIREBASE_"
-
-
 class OpenAIConfig(BaseSettings):
     API_KEY: str
 
@@ -54,5 +44,4 @@ class OpenAIConfig(BaseSettings):
 class CONFIG:
     UVICORN = UvicornConfig()
     DB = DatabaseConfig()
-    FIREBASE = FirebaseConfig()
     OPENAI = OpenAIConfig()
