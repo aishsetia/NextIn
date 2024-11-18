@@ -22,21 +22,21 @@ async def execute(db_session: DBSession):
         .where(ClothingItem.status == ClothingItemStatus.PROCESSING)
         .order_by(ClothingItem.created_at.desc())
     )
-    to_be_processed = clothing_items.first()
-    if not to_be_processed:
-        return {"No items to process"}
+    item_to_process = clothing_items.first()
+    if not item_to_process:
+        return {"message": "No items to process"}
 
-    print(f"Processing item: {to_be_processed.id}")
+    print(f"Processing item: {item_to_process.id}")
 
-    await process_item(db_session, to_be_processed)
+    await process_item(db_session, item_to_process)
 
 
 async def process_item(db_session: DBSession, item: ClothingItem):
     try:
         attributes = extract_attributes(item.image_path)
 
-        for attribute, value in attributes.items():
-            setattr(item, attribute, value)
+        for attr, value in attributes.items():
+            setattr(item, attr, value)
 
         item.status = ClothingItemStatus.FINISHED
         db_session.add(item)
@@ -57,13 +57,12 @@ async def suggest(db_session: DBSession, prompt: str):
     available_items = await db_session.exec(
         select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.FINISHED)
     )
-    available_items = available_items.all()
+    items = available_items.all()
 
-    clothing_items = ""
-    counter = 1
-    for item in available_items:
-        clothing_items += f"{counter}: {item.look_type.value} - {item.color} colored {item.garment_type} with {item.patterns} pattern\n"
-        counter += 1
+    clothing_items = "\n".join(
+        f"{i+1}: {item.look_type.value} - {item.color} colored {item.garment_type} with {item.patterns} pattern"
+        for i, item in enumerate(items)
+    )
     suggestions = process_prompt(prompt, clothing_items)
 
     return suggestions

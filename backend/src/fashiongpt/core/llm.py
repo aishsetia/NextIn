@@ -13,14 +13,16 @@ class LLMOpenAI:
         self.client = OpenAI(api_key=self.key)
 
     def chat(self, model, messages):
-        try:
-            completion = self.client.chat.completions.create(
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                completion = self.client.chat.completions.create(
                 model=model,
-                messages=messages,
-                timeout=120,
-            )
-            return completion
-        except Exception as ex:
-            print(f"[CHAT COMPLETION] {ex}")
-            time.sleep(random.randint(10, 20))
-            return self.chat(model, messages)
+                    messages=messages,
+                    timeout=120,
+                )
+                return completion
+            except Exception as ex:
+                print(f"[CHAT COMPLETION] {ex}")
+                time.sleep(random.randint(10, 20))
+        raise Exception("Failed to get chat completion")
