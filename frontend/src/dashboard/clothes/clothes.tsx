@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useUploadClothes, useClothes, useInProgressClothes, useUpload } from '@/dashboard/clothes/clothes.query';
-import {
-  Card,
-  Image,
-  Text,
-  Group,
-  Button,
-  Modal,
-  FileInput,
-  LoadingOverlay,
-  Grid,
-} from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUploadClothes, useClothes } from '@/dashboard/clothes/clothes.query';
+import { Modal, FileInput, LoadingOverlay, Button } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import styles from './clothes.module.scss';
 
 interface ClothingItem {
   id: string;
@@ -49,16 +40,20 @@ const Clothes: React.FC = () => {
     open();
   };
 
+  const getStatusClass = (status: string) => {
+    return status.toLowerCase() === 'processing' 
+      ? styles['status-processing']
+      : styles['status-completed'];
+  };
+
   if (isLoading) return <LoadingOverlay visible={true} />;
-  if (isError) return <Text>Failed to load clothes.</Text>;
+  if (isError) return <div className="text-red-600">Failed to load clothes.</div>;
 
   return (
-    <div style={{ position: 'relative', padding: '20px' }}>
-      <Group position="apart" style={{ marginBottom: '20px' }}>
-        <Text size="xl" weight={700}>
-          Your Clothes
-        </Text>
-        <Group>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Your Clothes</h1>
+        <div className={styles['upload-group']}>
           <FileInput
             placeholder="Upload your clothing"
             value={file}
@@ -68,33 +63,47 @@ const Clothes: React.FC = () => {
           <Button onClick={handleUpload} disabled={!file}>
             Upload
           </Button>
-        </Group>
-      </Group>
+        </div>
+      </div>
 
-      <Grid>
+      <div className={styles.grid}>
         {data?.clothes.map((cloth: ClothingItem) => (
-          <Grid.Col span={4} key={cloth.id}>
-            <Card shadow="sm" padding="lg" onClick={() => handleCardClick(cloth)} style={{ cursor: 'pointer' }}>
-              <Card.Section>
-                <Image src={`http://localhost:9000/uploads/${cloth.image}`} height={160} alt="Clothing Image" />
-              </Card.Section>
-
-              <Group position="apart" style={{ marginBottom: 5, marginTop: '10px' }}>
-                <Text weight={500}>Status: {cloth.status}</Text>
-              </Group>
-            </Card>
-          </Grid.Col>
+          <div key={cloth.id} className={styles.card} onClick={() => handleCardClick(cloth)}>
+            <div className={styles['card-image-wrapper']}>
+              <img 
+                src={`http://localhost:9000/uploads/${cloth.image}`}
+                alt="Clothing Item"
+                className={styles['card-image']}
+              />
+            </div>
+            <div className={styles['card-content']}>
+              <span className={`${styles['status-badge']} ${getStatusClass(cloth.status)}`}>
+                {cloth.status}
+              </span>
+            </div>
+          </div>
         ))}
-      </Grid>0
+      </div>
 
-      <Modal opened={opened} onClose={close} title="Clothing Details">
+      <Modal opened={opened} onClose={close} title="Clothing Details" size="lg">
         {selectedCloth && (
-          <div>
-            <Image src={`http://localhost:9000/uploads/${selectedCloth.image}`} height={200} alt="Clothing Image" />
-            <Text><strong>Color:</strong> {selectedCloth.color || 'N/A'}</Text>
-            <Text><strong>Garment Type:</strong> {selectedCloth.garment_type || 'N/A'}</Text>
-            <Text><strong>Patterns:</strong> {selectedCloth.patterns || 'N/A'}</Text>
-            <Text><strong>Look Type:</strong> {selectedCloth.look_type || 'N/A'}</Text>
+          <div className={styles['modal-content']}>
+            <div className={styles['modal-image']}>
+              <img
+                src={`http://localhost:9000/uploads/${selectedCloth.image}`}
+                alt="Clothing Detail"
+              />
+            </div>
+            {['color', 'garmentType', 'patterns', 'lookType'].map((field) => (
+              <div key={field} className={styles['detail-row']}>
+                <span className={styles['detail-label']}>
+                  {field.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}:
+                </span>
+                <span className={styles['detail-value']}>
+                  {selectedCloth[field as keyof ClothingItem] || 'N/A'}
+                </span>
+              </div>
+            ))}
           </div>
         )}
       </Modal>
