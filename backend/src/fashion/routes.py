@@ -20,7 +20,7 @@ async def _trigger_project_processing():
     client = httpx.AsyncClient()
     print("Triggering project processing")
     resp = await client.post(
-        f"{CONFIG.FASHIONGPT.API_URL}/pipeline/execute"
+        f"{CONFIG.FASHIONGPT.API_URL}/execute"
     )
     print(f"Project processing triggered")
 
