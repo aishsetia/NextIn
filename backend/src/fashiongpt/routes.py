@@ -8,6 +8,7 @@ from fashion.models import ClothingItem, ClothingItemStatus
 
 from .extractor import extract_attributes
 from .suggestions import process_prompt
+from .schemas import SuggestionRequest, SuggestionResponse
 
 router = APIRouter(
     prefix="/fashiongpt",
@@ -53,7 +54,7 @@ async def process_item(db_session: DBSession, item: ClothingItem):
 
 
 @router.post("/suggest")
-async def suggest(db_session: DBSession, prompt: str):
+async def suggest(db_session: DBSession, request: SuggestionRequest) -> SuggestionResponse:
     available_items = await db_session.exec(
         select(ClothingItem).where(ClothingItem.status == ClothingItemStatus.FINISHED)
     )
@@ -63,6 +64,6 @@ async def suggest(db_session: DBSession, prompt: str):
         f"{i+1}: {item.look_type.value} - {item.color} colored {item.garment_type} with {item.patterns} pattern"
         for i, item in enumerate(items)
     )
-    suggestions = process_prompt(prompt, clothing_items)
+    suggestion = process_prompt(request.prompt, clothing_items)
 
-    return suggestions
+    return SuggestionResponse(suggestion=suggestion)

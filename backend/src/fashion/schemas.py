@@ -1,13 +1,14 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from core.schemas import APIModel
 
 from fashion.models import ClothingItemStatus, LookType
 
+from fastapi import UploadFile, File
 
-class ClothingInfoMinimal(BaseModel):
+class ClothingInfoMinimal(APIModel):
     id: str
-    image_path: str
+    image: str
     status: ClothingItemStatus
 
 
@@ -18,13 +19,22 @@ class ClothingInfo(ClothingInfoMinimal):
     look_type: Optional[LookType] = None
 
 
-class Clothes(BaseModel):
+class Clothes(APIModel):
     clothes: list[ClothingInfo]
 
 
-class ClothesInProgress(BaseModel):
+class ClothesInProgress(APIModel):
     clothes: list[ClothingInfoMinimal]
 
 
-class UploadClothResponse(BaseModel):
+class UploadClothResponse(APIModel):
     id: str
+    
+
+class ClothImageRequest(APIModel):
+    filename: str
+    
+    
+class UploadClothRequest(APIModel):
+    image_name: str
+    image_buffer: str
