@@ -7,10 +7,26 @@ from .schemas import Clothes, ClothesInProgress, ClothingInfo, ClothingInfoMinim
 from fastapi import UploadFile, File, HTTPException
 import shutil
 import os
+import httpx
+import asyncio
+from core.config import CONFIG
+
 router = APIRouter(
     prefix="/clothes",
     tags=["clothes"],
 )
+
+async def _trigger_project_processing():
+    client = httpx.AsyncClient()
+    print("Triggering project processing")
+    resp = await client.post(
+        f"{CONFIG.FASHIONGPT.API_URL}/pipeline/execute"
+    )
+    print(f"Project processing triggered")
+
+
+async def trigger_project_processing():
+    asyncio.ensure_future(_trigger_project_processing())
 
 
 @router.get("/")
@@ -63,4 +79,7 @@ async def upload_clothes(db_session: DBSession, image: UploadFile = File(...)) -
     db_session.add(cloth)
     await db_session.commit()
     await db_session.refresh(cloth)
+    print("triggering project processing")
+    await trigger_project_processing()
+    print("project processing triggered")
     return UploadClothResponse(id=cloth.id)
