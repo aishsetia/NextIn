@@ -60,9 +60,10 @@ async def suggest(db_session: DBSession, prompt: str):
     available_items = available_items.all()
 
     clothing_items = ""
+    counter = 1
     for item in available_items:
-        clothing_items += f"{item.id}: {item.look_type.value} - {item.color} colored {item.garment_type} with {item.patterns} pattern\n"
-
+        clothing_items += f"{counter}: {item.look_type.value} - {item.color} colored {item.garment_type} with {item.patterns} pattern\n"
+        counter += 1
     suggestions = process_prompt(prompt, clothing_items)
 
     return suggestions
