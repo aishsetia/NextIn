@@ -15,11 +15,14 @@ class ClothingInfo(ClothingInfoMinimal):
     patterns: Optional[str] = None
     look_type: Optional[LookType] = None
 
+
 class Clothes(BaseModel):
     clothes: list[ClothingInfo]
 
+
 class ClothesInProgress(BaseModel):
     clothes: list[ClothingInfoMinimal]
+
 
 class UploadClothResponse(BaseModel):
     id: str

@@ -13,6 +13,7 @@ app = FastAPI(
 app.include_router(clothes_router)
 app.include_router(fashiongpt_router)
 
+
 @app.get("/")
 async def root():
     return {"message": "Welcome to NextIn API"}

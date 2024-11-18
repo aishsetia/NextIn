@@ -22,9 +22,10 @@ The image of the clothing item is attached. The attributes should be in the foll
 DO NOT MISS ANY INFORMATION OR ADD ANY EXTRA INFORMATION THAT IS NOT IN THE IMAGE.
 """
 
+
 def extract_attributes(image_fp: str) -> dict:
     llm = LLMOpenAI()
-    
+
     with open(image_fp, "rb") as image_file:
         image_data = image_file.read()
 
@@ -38,7 +39,12 @@ def extract_attributes(image_fp: str) -> dict:
         }
     )
     messages = [
-        {"role": "system", "content": extract_attributes_raw_prompt.format(output_format=output_format)},
+        {
+            "role": "system",
+            "content": extract_attributes_raw_prompt.format(
+                output_format=output_format
+            ),
+        },
         message_with_image,
     ]
     completion = llm.chat(model="gpt-4o", messages=messages)
@@ -53,9 +59,9 @@ def validate_and_parse_output(output: str) -> dict:
     json_match = re.search(r"```json\s*\n(.*?)\n```", output, re.DOTALL)
     if not json_match:
         raise ValueError("Invalid JSON output")
-    
+
     output = json_match.group(1)
-    
+
     try:
         output = json.loads(output)
     except json.JSONDecodeError:
@@ -70,9 +76,13 @@ def validate_and_parse_output(output: str) -> dict:
         or "look_type" not in output
     ):
         raise ValueError("Missing required fields")
-    
+
     # remove extra fields
-    output = {k: v for k, v in output.items() if k in ["color", "garment_type", "patterns", "look_type"]}
+    output = {
+        k: v
+        for k, v in output.items()
+        if k in ["color", "garment_type", "patterns", "look_type"]
+    }
 
     # check if look_type is one of the allowed values
     if output["look_type"] not in [look_type.value for look_type in LookType]:

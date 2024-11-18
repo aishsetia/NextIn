@@ -3,7 +3,13 @@ from sqlmodel import select
 
 from core.db import DBSession
 from .models import ClothingItem, ClothingItemStatus
-from .schemas import Clothes, ClothesInProgress, ClothingInfo, ClothingInfoMinimal, UploadClothResponse
+from .schemas import (
+    Clothes,
+    ClothesInProgress,
+    ClothingInfo,
+    ClothingInfoMinimal,
+    UploadClothResponse,
+)
 from fastapi import UploadFile, File, HTTPException
 import shutil
 import os
@@ -16,12 +22,11 @@ router = APIRouter(
     tags=["clothes"],
 )
 
+
 async def _trigger_project_processing():
     client = httpx.AsyncClient()
     print("Triggering project processing")
-    resp = await client.post(
-        f"{CONFIG.FASHIONGPT.API_URL}/execute"
-    )
+    resp = await client.post(f"{CONFIG.FASHIONGPT.API_URL}/execute")
     print(f"Project processing triggered")
 
 
@@ -50,6 +55,7 @@ async def get_clothes(db_session: DBSession) -> Clothes:
         ]
     )
 
+
 @router.get("/in-progress")
 async def get_in_progress_clothes(db_session: DBSession) -> ClothesInProgress:
     clothes_query = await db_session.exec(
@@ -67,8 +73,11 @@ async def get_in_progress_clothes(db_session: DBSession) -> ClothesInProgress:
         ]
     )
 
+
 @router.post("/")
-async def upload_clothes(db_session: DBSession, image: UploadFile = File(...)) -> UploadClothResponse:
+async def upload_clothes(
+    db_session: DBSession, image: UploadFile = File(...)
+) -> UploadClothResponse:
     if not image.filename:
         raise HTTPException(status_code=400, detail="No file uploaded")
     os.makedirs("uploads", exist_ok=True)
