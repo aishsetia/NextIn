@@ -27,6 +27,7 @@ OUTPUT_ATTRIBUTES_DESCRIPTION = """
 6. **Tone:** The tone of your response should be advisory and helpful. You should directly address the user, and abstract away the complexity of the task as well as analysis steps.
 """
 
+
 def process_prompt(prompt: str, clothing_items: str) -> list[str]:
     model = "gpt-4o"
     messages = [
@@ -41,5 +42,5 @@ def process_prompt(prompt: str, clothing_items: str) -> list[str]:
     ]
     completion = LLMOpenAI().chat(model=model, messages=messages)
     output = completion.choices[0].message.content
-    
+
     return output

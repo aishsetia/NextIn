@@ -1,9 +1,9 @@
 import math
 from typing import Annotated
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlmodel.ext.asyncio.session import AsyncSession
-from fastapi import Depends
 
 from core.config import CONFIG
 

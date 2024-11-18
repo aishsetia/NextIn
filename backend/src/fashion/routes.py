@@ -10,13 +10,8 @@ from core.config import CONFIG
 from core.db import DBSession
 
 from .models import ClothingItem, ClothingItemStatus
-from .schemas import (
-    Clothes,
-    ClothesInProgress,
-    ClothingInfo,
-    ClothingInfoMinimal,
-    UploadClothResponse,
-)
+from .schemas import (Clothes, ClothesInProgress, ClothingInfo,
+                      ClothingInfoMinimal, UploadClothResponse)
 
 router = APIRouter(
     prefix="/clothes",

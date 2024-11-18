@@ -17,7 +17,7 @@ class LLMOpenAI:
         for attempt in range(max_retries):
             try:
                 completion = self.client.chat.completions.create(
-                model=model,
+                    model=model,
                     messages=messages,
                     timeout=120,
                 )
