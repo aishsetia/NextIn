@@ -1,10 +1,13 @@
+import traceback
+
 from fastapi import APIRouter
 from sqlmodel import select
-from fashion.models import ClothingItem, ClothingItemStatus
+
 from core.db import DBSession
+from fashion.models import ClothingItem, ClothingItemStatus
+
 from .extractor import extract_attributes
 from .suggestions import process_prompt
-import traceback
 
 router = APIRouter(
     prefix="/fashiongpt",

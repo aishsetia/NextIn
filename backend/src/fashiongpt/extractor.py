@@ -1,7 +1,8 @@
 import json
-from base64 import b64encode
-from fashion import LookType
 import re
+from base64 import b64encode
+
+from fashion import LookType
 from fashiongpt.core.llm import LLMOpenAI
 
 output_format = """

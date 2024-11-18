@@ -1,6 +1,7 @@
 import os
-import time
 import random
+import time
+
 from openai import OpenAI
 
 from core.config import CONFIG

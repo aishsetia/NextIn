@@ -1,8 +1,9 @@
-from typing import Optional
-from sqlmodel import SQLModel, Field
 from datetime import datetime
 from enum import Enum
+from typing import Optional
 from uuid import uuid4
+
+from sqlmodel import Field, SQLModel
 
 
 class ClothingItemStatus(str, Enum):

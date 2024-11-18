@@ -1,21 +1,17 @@
-from fastapi import APIRouter
+import asyncio
+import os
+import shutil
+
+import httpx
+from fastapi import APIRouter, File, HTTPException, UploadFile
 from sqlmodel import select
 
-from core.db import DBSession
-from .models import ClothingItem, ClothingItemStatus
-from .schemas import (
-    Clothes,
-    ClothesInProgress,
-    ClothingInfo,
-    ClothingInfoMinimal,
-    UploadClothResponse,
-)
-from fastapi import UploadFile, File, HTTPException
-import shutil
-import os
-import httpx
-import asyncio
 from core.config import CONFIG
+from core.db import DBSession
+
+from .models import ClothingItem, ClothingItemStatus
+from .schemas import (Clothes, ClothesInProgress, ClothingInfo,
+                      ClothingInfoMinimal, UploadClothResponse)
 
 router = APIRouter(
     prefix="/clothes",

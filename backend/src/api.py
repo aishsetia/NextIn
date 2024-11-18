@@ -2,8 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import ORJSONResponse
-from core.config import CONFIG
 
+from core.config import CONFIG
 from fashion import router as clothes_router
 from fashiongpt import router as fashiongpt_router
 
