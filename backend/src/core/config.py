@@ -41,7 +41,15 @@ class OpenAIConfig(BaseSettings):
         env_prefix = "OPENAI_"
 
 
+class FashionGPTConfig(BaseSettings):
+    API_URL: str
+
+    class Config:
+        env_prefix = "FASHIONGPT_"
+
+
 class CONFIG:
     UVICORN = UvicornConfig()
     DB = DatabaseConfig()
     OPENAI = OpenAIConfig()
+    FASHIONGPT = FashionGPTConfig()

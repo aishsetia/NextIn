@@ -1,7 +1,4 @@
-import json
-import re
-
-from .core.llm import LLMOpenAI, LLMOpenAIModels
+from .core.llm import LLMOpenAI
 
 raw_prompt = """
 You are an expert consultant specializing in fashion. Your task is to analyse the given prompt and the descriptions of clothing items available with the user, and suggest a combination of clothing items to create a complete outfit.
@@ -28,18 +25,19 @@ output_attributes_description = """
 """
 
 
-def process_request_for_proposals(request_for_proposals: str) -> list[str]:
-    model = LLMOpenAIModels.GPT_4O_MINI.value
+def process_prompt(prompt: str, clothing_items: str) -> list[str]:
+    model = "gpt-4o"
     messages = [
         {
             "role": "system",
             "content": raw_prompt.format(
-                request_for_proposals=request_for_proposals,
+                prompt=prompt,
+                clothing_items=clothing_items,
                 output_attributes_description=output_attributes_description,
             ),
         }
     ]
-    completion = LLMOpenAI(temperature=0.2).chat(model=model, messages=messages)
+    completion = LLMOpenAI().chat(model=model, messages=messages)
     output = completion.choices[0].message.content
 
     return output
